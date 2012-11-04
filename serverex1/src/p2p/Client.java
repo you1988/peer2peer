@@ -24,12 +24,8 @@ public class Client {
 	 * @throws SocketException if Socket can't be opened
 	 */
 	public Client(String host, int port) throws SocketException {
-		this.socket = new DatagramSocket(2345);
-		this.server = new InetSocketAddress(host, port);
-		//this.sendPush("bar");
-		//this.sendPush("foo");
-		//this.sendPull();
-		//this.sendPrint();
+		this.socket = new DatagramSocket(port);
+		this.server = new InetSocketAddress(host, 1234);
 	}
 	
 	public void send(String msg) {

@@ -16,7 +16,7 @@ public class UInterface extends JFrame {
 	public static void main(String argv[]) {
 		Client client = null ;
 		try {
-			client = new Client("localhost", 1234) ;
+			client = new Client("localhost", Integer.parseInt(argv[0])) ;
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
@@ -49,7 +49,7 @@ public class UInterface extends JFrame {
 		
 		setSize(470,300);
 		text.setBackground(Color.black); 
-		//this.show() ;
+		this.show() ;
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }
