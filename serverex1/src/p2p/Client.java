@@ -46,23 +46,23 @@ public class Client {
 	}
 	
 	public String sendPull() {
-		String res = "" ; 
+		String res = "";
 		this.send("pull");
 		byte[] buffer = new byte[255];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		try {
 			this.socket.receive(packet);
 			byte[] answer = packet.getData();
-			res = new String(answer, 0, answer.length) ;
-			System.out.println(new String(answer, 0, answer.length));
+			res = new String(answer, 0, packet.getLength(), "utf-8");
+			System.out.println(new String(answer, 0, packet.getLength(), "utf-8"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return res ;
+		return res;
 	}
 	
 	public void sendPush(String string) {
 		this.send("push " + string);
 	}
-
+	
 }
