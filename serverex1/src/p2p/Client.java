@@ -10,8 +10,8 @@ import java.net.SocketException;
 public class Client {
 	
 	
-	private String host;
-	private int port;
+	//private String host;
+	//private int port;
 	private DatagramSocket socket;
 	private InetSocketAddress server;
 	
@@ -26,13 +26,13 @@ public class Client {
 	public Client(String host, int port) throws SocketException {
 		this.socket = new DatagramSocket(2345);
 		this.server = new InetSocketAddress(host, port);
-		this.sendPush("bar");
-		this.sendPush("foo");
-		this.sendPull();
-		this.sendPrint();
+		//this.sendPush("bar");
+		//this.sendPush("foo");
+		//this.sendPull();
+		//this.sendPrint();
 	}
 	
-	private void send(String msg) {
+	public void send(String msg) {
 		byte[] string = msg.getBytes();
 		DatagramPacket packet;
 		try {
@@ -45,32 +45,28 @@ public class Client {
 		}
 	}
 	
-	private void sendPrint() {
+	public void sendPrint() {
 		this.send("print");
 	}
 	
-	private void sendPull() {
+	public String sendPull() {
+		String res = "" ; 
 		this.send("pull");
 		byte[] buffer = new byte[255];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		try {
 			this.socket.receive(packet);
 			byte[] answer = packet.getData();
+			res = new String(answer, 0, answer.length) ;
 			System.out.println(new String(answer, 0, answer.length));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return res ;
 	}
 	
-	private void sendPush(String string) {
+	public void sendPush(String string) {
 		this.send("push " + string);
 	}
-	
-	public static void main(String[] args) {
-		try {
-			Client c = new Client("127.0.0.1", 1234);
-		} catch (SocketException e) {
-			e.printStackTrace();
-		}
-	}
+
 }
