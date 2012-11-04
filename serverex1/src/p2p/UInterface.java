@@ -14,6 +14,10 @@ public class UInterface extends JFrame {
 	public TextField	data;
 
 	public static void main(String argv[]) {
+		if (argv.length != 1) {
+			System.out.println("UInterface <port number>"); 
+			System.exit(0); 
+		}
 		Client client = null ;
 		try {
 			client = new Client("localhost", Integer.parseInt(argv[0])) ;
