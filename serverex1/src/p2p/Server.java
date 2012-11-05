@@ -6,6 +6,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class Server {
@@ -29,6 +31,7 @@ public class Server {
 	
 	public void startServer() {
 		try {
+			ExecutorService exec = Executors.newFixedThreadPool(100);
 			this.socket = new DatagramSocket(SERVER_PORT);
 			while (true) {
 				byte[] buf = new byte[256];
@@ -36,7 +39,7 @@ public class Server {
 				this.socket.receive(dp);
 				//FIXME feature : add a queue. 
 				Worker w = new Worker(dp);
-				w.start();
+				exec.execute(w);
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();
@@ -51,7 +54,7 @@ public class Server {
 	}
 	
 	
-	private class Worker extends Thread {
+	private class Worker implements Runnable{
 		
 		
 		private DatagramPacket packet;
