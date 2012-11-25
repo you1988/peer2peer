@@ -20,8 +20,13 @@ import javax.swing.JPanel;
 
 import edu.uci.ics.jung.algorithms.blockmodel.VertexPartition;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
+import edu.uci.ics.jung.algorithms.shortestpath.DijkstraDistance;
+import edu.uci.ics.jung.algorithms.shortestpath.Distance;
+import edu.uci.ics.jung.algorithms.shortestpath.DistanceStatistics;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
@@ -82,7 +87,7 @@ public class UInterface extends JFrame {
 	}
 
 	public BasicVisualizationServer<String, String> construire() {
-		Layout<String, String> layout = new FRLayout(this.graph);
+		Layout<String, String> layout = new SpringLayout(this.graph);
 		layout.setSize(new Dimension(300, 300));
 		BasicVisualizationServer<String, String> vue = new BasicVisualizationServer<String, String>(
 				layout);
