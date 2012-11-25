@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Peer extends Thread {
+	
 	public static int numport = 1000;
 	public static UInterface uiInterface;
 	private static final String PUSH = "push";
@@ -49,7 +50,7 @@ public class Peer extends Thread {
 	 * @param port
 	 *            of the neighbour that will receive the list.
 	 */
-	public void sendNeighborsListToNeigh(int port) {
+	public void sendNeighborsListToNeigh(int port , int neighbour) {
 		char[] resp = null;
 
 		SocketAddress neighbourAddress = new InetSocketAddress("localhost",
@@ -70,9 +71,9 @@ public class Peer extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		for (int portNei : portNeighbours) {
-			if (portNei != port) {
-				resp = new String("ADD_PORT " + portNei).toCharArray();
+		
+		if(port != neighbour){
+		resp = new String("ADD_PORT " + neighbour).toCharArray();
 
 				try {
 
@@ -86,7 +87,23 @@ public class Peer extends Thread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
+				resp = new String("ADD_PORT " + port).toCharArray();
+				SocketAddress neighbourAddress1 = new InetSocketAddress("localhost",
+						neighbour);
+
+				try {
+
+					channel.send(Charset.forName("ascii").encode(
+							CharBuffer.wrap(resp)),neighbourAddress1 );
+					//this.socket.send(answer);
+				} catch (SocketException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
 		}
 	}
 
@@ -100,9 +117,13 @@ public class Peer extends Thread {
 	 */
 
 	public void leaveMe() throws IOException {
-		for (int port : portNeighbours) {
+		for (int i =0 ; i< portNeighbours.size(); i++ ) {
+		int port = portNeighbours.get(i);
 			uiInterface.removeConnection(this.port, port);
-			sendNeighborsListToNeigh(port);
+		if(i< portNeighbours.size()-1)
+			sendNeighborsListToNeigh(port,portNeighbours.get(i+1));
+		else
+			sendNeighborsListToNeigh(port,portNeighbours.get(0));
 		}
 		// cut connection with all neighbours
 		uiInterface.removeVertex(this.port);
@@ -231,61 +252,10 @@ out.print(message);
 		peer.startServer();
 	}
 
-	private class Worker implements Runnable {
-
-		private DatagramPacket packet;
-
-		public Worker(DatagramPacket packet) {
-			this.packet = packet;
-		}
-
-		@Override
-		public void run() {
-			String in;
-			try {
-				in = new String(this.packet.getData(), 0,
-						this.packet.getLength(), "utf-8");
-				out.println("in: " + in);
-				String[] parts = in.split(" ");
-				if (parts.length >= 1) {
-					String command = parts[0];
-					if (command.equalsIgnoreCase("ADD_PORT")) {
-						int portAdded = Integer.valueOf(in.substring(ADD_PORT
-								.length() + 1));
-						System.out.println("I have received a new neighbour"
-								+ portAdded);
-
-						portNeighbours.add(portAdded);
-
-					}
-					if (command.equalsIgnoreCase(PUSH)) {
-						Peer.this.stack.push(in.substring(PUSH.length() + 1));
-					} else if (command.equalsIgnoreCase(PULL)) {
-						DatagramPacket answer;
-						byte[] resp;
-						try {
-
-							resp = Peer.this.stack.pop().getBytes();
-							answer = new DatagramPacket(resp, resp.length,
-									this.packet.getSocketAddress());
-							Peer.this.socket.send(answer);
-						} catch (SocketException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					} else if (command.equalsIgnoreCase(PRINT)) {
-						out.println(Peer.this.stack.toString());
-					}
-				}
-			} catch (UnsupportedEncodingException e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
 
 	public String toString() {
-		return "" + port;
+		char c = (char)(port-1000+65);
+		return "" +c;
 
 	}
 

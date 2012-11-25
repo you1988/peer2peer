@@ -18,8 +18,10 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
+import edu.uci.ics.jung.algorithms.blockmodel.VertexPartition;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
@@ -46,8 +48,9 @@ public class UInterface extends JFrame {
 
 		this.graph = new UndirectedSparseGraph<String, String>();
 		Peer firstPeer = new Peer();
-		graph.addVertex("" + firstPeer.getPort());
-		this.data = append(this.data, "" + firstPeer.getPort());
+		firstPeer.start();
+		graph.addVertex("" + firstPeer.toString());
+		this.data = append(this.data, "" + firstPeer.toString());
 		this.vue = construire();
 		this.add(this.vue);
 
@@ -83,10 +86,11 @@ public class UInterface extends JFrame {
 		layout.setSize(new Dimension(300, 300));
 		BasicVisualizationServer<String, String> vue = new BasicVisualizationServer<String, String>(
 				layout);
+
 		vue.setPreferredSize(new Dimension(350, 350));
 		vue.getRenderContext()
 				.setVertexLabelTransformer(new ToStringLabeller());
-		vue.getRenderContext().setEdgeLabelTransformer(new ToStringLabeller());
+		//vue.getRenderContext().setEdgeLabelTransformer();
 		vue.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 		return vue;
 	}
@@ -109,13 +113,18 @@ public class UInterface extends JFrame {
 
 	public void addPeer(int parentPort, Peer childPeer) {
 		int childPort = childPeer.getPort();
-		this.graph.addEdge(parentPort +"-" + childPort, "" + parentPort, "" + childPort);
+		if (!this.graph.containsVertex(childPeer.toString() + ""))
+			this.graph.addVertex(childPeer.toString());
+		char cParent = (char)(parentPort-1000+65);
+		char cChild = (char)(childPort-1000+65);
+		this.graph.addEdge(parentPort +"-" + childPort, "" + cParent, "" + cChild);
 		this.list.addItem(childPeer);
 		this.repaint();
 		this.repaint();
 	}
 public void removeVertex(int port){
-	this.graph.removeVertex(""+port);
+	char cParent = (char)(port-1000+65);
+	this.graph.removeVertex(""+cParent);
 	this.list.removeItem(this.list.getSelectedItem());
 	this.repaint();
 	this.repaint();
@@ -128,8 +137,10 @@ public void removeVertex(int port){
 	}
 	public void addPeer(int parentPort, int childPeerPort) {
 
-		this.graph.addEdge(parentPort +"-" + childPeerPort, "" + parentPort, ""
-				+ childPeerPort);
+		char cParent = (char)(parentPort-1000+65);
+		char cChild = (char)(childPeerPort-1000+65);
+		this.graph.addEdge(parentPort +"-" + childPeerPort, "" + cParent, "" + cChild);
+		
 		this.repaint();
 		this.repaint();
 	}
