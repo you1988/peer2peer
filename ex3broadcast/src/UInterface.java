@@ -1,3 +1,5 @@
+import static java.lang.Math.min;
+
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -115,6 +117,7 @@ public class UInterface extends JFrame {
 			this.graph.addEdge(p.toString() + "-" + newPeer.toString(), p.toString(), newPeer.toString());
 		}
 		this.repaint();
+		newPeer.start();
 	}
 	
 	public void removeConnection(Peer peer1, Peer peer2) {
@@ -142,7 +145,7 @@ public class UInterface extends JFrame {
 	 * @param number
 	 */
 	public void removeNumberOfPeers(int number) {
-		for (int i = 0; i < number; i++) {
+		for (int i = 0; i < min(number, this.listOfPeers.size()); i++) {
 			this.removePeer();
 		}
 	}
@@ -178,10 +181,9 @@ public class UInterface extends JFrame {
 		
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			int number = Integer.getInteger(this.ui.number.getText());
+			int number = Integer.parseInt(this.ui.number.getText());
 			this.ui.addNumberOfPeers(number);
 		}
-		
 	}
 	
 	class removePeerListener implements ActionListener {

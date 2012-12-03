@@ -41,11 +41,11 @@ public class PeerInfo {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return this.address.toString() + "\n" + String.valueOf(this.port);
+		return String.valueOf(this.port);
 	}
 	
 	public String serialize() {
-		return this.address.toString() + "-" + String.valueOf(this.port);
+		return this.address.getHostAddress() + "-" + String.valueOf(this.port);
 	}
 	
 	public static PeerInfo deserialize(String string) {
