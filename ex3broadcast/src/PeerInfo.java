@@ -35,7 +35,6 @@ public class PeerInfo {
 	@Override
 	public boolean equals(Object obj) {
 		return (((PeerInfo)obj).port == this.port && ((PeerInfo)obj).address == this.address);
-		
 	}
 	
 	/** {@inheritDoc} */

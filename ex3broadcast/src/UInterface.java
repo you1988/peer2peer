@@ -74,6 +74,9 @@ public class UInterface extends JFrame {
 		JButton remove_button = new JButton("Leave");
 		remove_button.addActionListener(new removePeerListener(this));
 		panelButtons.add(remove_button);
+		JButton broadcast_button = new JButton("Broadcast");
+		broadcast_button.addActionListener(new BroadcastListener(this));
+		panelButtons.add(broadcast_button);
 		
 		content.add(this.view);
 		content.add(panelSelector);
@@ -159,12 +162,12 @@ public class UInterface extends JFrame {
 			return;
 		}
 		Peer peer = this.getRandomPeer();
-		peer.leaveMe();
 		this.listOfPeers.remove(peer);
 		this.graph.removeVertex(peer.toString());
 		for (PeerInfo p : peer.getNeighbours()) {
 			this.removeConnection(peer, p.getPeer());
 		}
+		peer.leaveMe();
 		this.repaint();
 	}
 	
@@ -186,6 +189,22 @@ public class UInterface extends JFrame {
 		}
 	}
 	
+	class BroadcastListener implements ActionListener {
+		
+		
+		UInterface ui;
+		
+		
+		public BroadcastListener(UInterface ui) {
+			this.ui = ui;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			this.ui.broadcast();
+		}
+	}
+	
 	class removePeerListener implements ActionListener {
 		
 		
@@ -198,8 +217,18 @@ public class UInterface extends JFrame {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int number = Integer.getInteger(this.ui.number.getText());
+			int number = Integer.parseInt(this.ui.number.getText());
 			this.ui.removeNumberOfPeers(number);
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * 
+	 */
+	public void broadcast() {
+		Peer peer = this.getRandomPeer();
+		peer.startBroadcast();
 	}
 }
