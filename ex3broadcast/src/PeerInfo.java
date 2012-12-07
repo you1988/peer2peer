@@ -34,13 +34,19 @@ public class PeerInfo {
 	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
-		return (((PeerInfo)obj).port == this.port && ((PeerInfo)obj).address == this.address);
+		return (((PeerInfo)obj).port == this.port && ((PeerInfo)obj).address.equals(this.address));
 	}
 	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return String.valueOf(this.port);
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public int hashCode() {
+		return this.port;
 	}
 	
 	public String serialize() {

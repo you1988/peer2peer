@@ -16,7 +16,7 @@ public class StopBroadcast extends TimerTask {
 	 * @param t
 	 */
 	public StopBroadcast(TimerTask task) {
-		this.task = this.task;
+		this.task = task;
 	}
 	
 	/** {@inheritDoc} */

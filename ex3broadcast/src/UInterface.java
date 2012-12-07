@@ -163,10 +163,11 @@ public class UInterface extends JFrame {
 		}
 		Peer peer = this.getRandomPeer();
 		this.listOfPeers.remove(peer);
-		this.graph.removeVertex(peer.toString());
-		for (PeerInfo p : peer.getNeighbours()) {
-			this.removeConnection(peer, p.getPeer());
-		}
+//		this.graph.removeVertex(peer.toString());
+//		HashSet<PeerInfo> peers = (HashSet<PeerInfo>)peer.getNeighbours().clone();
+//		for (PeerInfo p : peers) {
+//			this.removeConnection(peer, p.getPeer());
+//		}
 		peer.leaveMe();
 		this.repaint();
 	}

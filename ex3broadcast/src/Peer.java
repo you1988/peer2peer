@@ -27,7 +27,7 @@ public class Peer extends Thread {
 	private HashSet<PeerInfo> neighbours;
 	private CircularFifoBuffer<String> relIDs;
 	HashMap<UUID, RelSendTask> ackBuffer;
-	HashMap<String, HashSet<PeerInfo>> globalNetwork;
+	HashMap<PeerInfo, HashSet<PeerInfo>> globalNetwork;
 	Timer timer;
 	Queue<PeerInfo> broadcastNeighbours;
 	
@@ -35,7 +35,7 @@ public class Peer extends Thread {
 	public Peer() {
 		this.neighbours = new HashSet<PeerInfo>();
 		this.relIDs = new CircularFifoBuffer<String>(20);
-		this.globalNetwork = new HashMap<String, HashSet<PeerInfo>>();
+		this.globalNetwork = new HashMap<PeerInfo, HashSet<PeerInfo>>();
 		this.ackBuffer = new HashMap<UUID, RelSendTask>();
 		this.timer = new Timer();
 		try {
@@ -76,16 +76,17 @@ public class Peer extends Thread {
 		HashSet<PeerInfo> lon = (HashSet<PeerInfo>)this.neighbours.clone();
 		for (PeerInfo neighbour : this.neighbours) {
 			lon.remove(neighbour);
-			StringBuilder allPeers = new StringBuilder(Constants.ADD_PEER);
-			for (PeerInfo peer : lon) {
-				allPeers.append(" ");
-				allPeers.append(peer.serialize());
+			if (lon.size() > 0) {
+				StringBuilder allPeers = new StringBuilder(Constants.ADD_PEER);
+				for (PeerInfo peer : lon) {
+					allPeers.append(" ");
+					allPeers.append(peer.serialize());
+				}
+				RemovePeer removePeer = new RemovePeer(this, neighbour);
+				this.reliableSend(allPeers.toString(), neighbour, removePeer);
 			}
-			RemovePeer removePeer = new RemovePeer(this, neighbour);
-			this.reliableSend(allPeers.toString(), neighbour, removePeer);
 		}
-		this.timer.cancel();
-		this.stop();
+		this.timer.schedule(new LeaveAnyway(this), Constants.LEAVE_DELAY);
 	}
 	
 	/**
@@ -103,13 +104,13 @@ public class Peer extends Thread {
 	}
 	
 	public void startServer() {
+		final ByteBuffer buffer = ByteBuffer.allocate(512);
 		while (!this.isInterrupted()) {
-			final ByteBuffer buffer = ByteBuffer.allocate(64 * 1028);
 			try {
-				final SocketAddress sender = this.channel.receive(buffer);
-				
+				this.channel.receive(buffer);
 				buffer.flip();
 				String message = Charset.forName("ascii").decode(buffer).toString();
+				buffer.clear();
 				out.println(this.getInfo().toString() + " " + message);
 				this.parseMsg(message);
 			} catch (IOException e) {
@@ -138,8 +139,8 @@ public class Peer extends Thread {
 	}
 	
 	public void startBroadcast() {
-		this.globalNetwork = new HashMap<String, HashSet<PeerInfo>>();
-		this.globalNetwork.put(this.getInfo().serialize(), this.neighbours);
+		this.globalNetwork = new HashMap<PeerInfo, HashSet<PeerInfo>>();
+		this.globalNetwork.put(this.getInfo(), this.neighbours);
 		this.broadcastNeighbours = new LinkedList<PeerInfo>(this.neighbours);
 		TimerTask t = new SendBroadcast(this);
 		this.timer.schedule(t, 1, Constants.BROADCAST_PERIOD);
@@ -171,7 +172,10 @@ public class Peer extends Thread {
 				this.send(Constants.ACKNOWLEDGE + " " + parts[1], PeerInfo.deserialize(parts[2]));
 			} else if (command.equalsIgnoreCase(Constants.ACKNOWLEDGE)) {
 				UUID uuid = UUID.fromString(parts[1]);
-				this.ackBuffer.get(uuid).cancel();
+				TimerTask t = this.ackBuffer.get(uuid);
+				if (t != null) {
+					t.cancel();
+				}
 			} else if (command.equalsIgnoreCase(Constants.BROADCAST)) {
 				PeerInfo sender = PeerInfo.deserialize(parts[1]);
 				StringBuilder b = new StringBuilder(Constants.BROADCAST_ANSWER);
@@ -184,7 +188,7 @@ public class Peer extends Thread {
 				this.send(b.toString(), sender);
 			} else if (command.equalsIgnoreCase(Constants.BROADCAST_ANSWER)) {
 				PeerInfo neighbour = PeerInfo.deserialize(parts[1]);
-				HashSet<PeerInfo> l = this.globalNetwork.get(neighbour.serialize());
+				HashSet<PeerInfo> l = this.globalNetwork.get(neighbour);
 				for (int i = 2; i < parts.length; i++) {
 					PeerInfo p = PeerInfo.deserialize(parts[i]);
 					l.add(p);

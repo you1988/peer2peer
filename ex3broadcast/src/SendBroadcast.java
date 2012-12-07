@@ -32,7 +32,7 @@ public class SendBroadcast extends TimerTask {
 		if (neighbours.size() > 0) {
 			target = neighbours.remove();
 			if (!this.peer.globalNetwork.containsKey(target.serialize())) {
-				this.peer.globalNetwork.put(target.serialize(), new HashSet<PeerInfo>());
+				this.peer.globalNetwork.put(target, new HashSet<PeerInfo>());
 			}
 			this.peer.send(b.toString(), target);
 		}
@@ -41,8 +41,8 @@ public class SendBroadcast extends TimerTask {
 	/** {@inheritDoc} */
 	@Override
 	public boolean cancel() {
-		for (String serializedPeer : this.peer.globalNetwork.keySet()) {
-			PeerInfo peer = PeerInfo.deserialize(serializedPeer);
+		for (PeerInfo serializedPeer : this.peer.globalNetwork.keySet()) {
+			PeerInfo peer = serializedPeer;
 			System.out.print(peer.toString());
 			for (PeerInfo neighbour : this.peer.globalNetwork.get(peer)) {
 				System.out.print(" ");

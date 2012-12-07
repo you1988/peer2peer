@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="jung-api-2.0.1.jar"/>
 	<classpathentry kind="lib" path="jung-graph-impl-2.0.1.jar"/>
 	<classpathentry kind="lib" path="jung-visualization-2.0.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

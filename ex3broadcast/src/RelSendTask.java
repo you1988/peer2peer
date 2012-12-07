@@ -14,6 +14,7 @@ public class RelSendTask extends TimerTask {
 	private SocketAddress target;
 	private UUID uuid;
 	private Runnable runnable;
+	private int counter = 0;
 	
 	
 	/**
@@ -57,6 +58,9 @@ public class RelSendTask extends TimerTask {
 	@Override
 	public void run() {
 		this.send();
+		if (this.counter++ > 5) {
+			this.cancel();
+		}
 	}
 	
 }
