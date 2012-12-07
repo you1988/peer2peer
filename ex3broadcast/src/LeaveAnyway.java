@@ -21,6 +21,7 @@ public class LeaveAnyway extends TimerTask {
 	@Override
 	public void run() {
 		System.out.println("Bin weg!");
+		this.peer.timer.cancel();
 		this.peer.stop();
 	}
 	
