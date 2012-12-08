@@ -53,7 +53,7 @@ public class AnalysisDiagram extends ApplicationFrame{
 	
 
 	public JFreeChart createChart(CategoryDataset dataset) {
-		final JFreeChart chart = ChartFactory.createStackedBarChart(
+		final JFreeChart chart = ChartFactory.createBarChart(
 				"Analysis",
 				"Time",
 				"Number of Nodes",
