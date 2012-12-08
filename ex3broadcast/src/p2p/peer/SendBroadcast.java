@@ -1,6 +1,9 @@
+package p2p.peer;
+
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.TimerTask;
+
 
 
 /**
@@ -24,15 +27,15 @@ public class SendBroadcast extends TimerTask {
 	/** {@inheritDoc} */
 	@Override
 	public void run() {
-		Queue<PeerInfo> neighbours = this.peer.broadcastNeighbours;
-		PeerInfo target;
+		Queue<PeerAddress> neighbours = this.peer.broadcastNeighbours;
+		PeerAddress target;
 		StringBuilder b = new StringBuilder(Constants.BROADCAST);
 		b.append(" ");
 		b.append(this.peer.getInfo().serialize());
 		if (neighbours.size() > 0) {
 			target = neighbours.remove();
 			if (!this.peer.globalNetwork.containsKey(target.serialize())) {
-				this.peer.globalNetwork.put(target, new HashSet<PeerInfo>());
+				this.peer.globalNetwork.put(target, new HashSet<PeerAddress>());
 			}
 			this.peer.send(b.toString(), target);
 		}
@@ -41,10 +44,10 @@ public class SendBroadcast extends TimerTask {
 	/** {@inheritDoc} */
 	@Override
 	public boolean cancel() {
-		for (PeerInfo serializedPeer : this.peer.globalNetwork.keySet()) {
-			PeerInfo peer = serializedPeer;
+		for (PeerAddress serializedPeer : this.peer.globalNetwork.keySet()) {
+			PeerAddress peer = serializedPeer;
 			System.out.print(peer.toString());
-			for (PeerInfo neighbour : this.peer.globalNetwork.get(peer)) {
+			for (PeerAddress neighbour : this.peer.globalNetwork.get(peer)) {
 				System.out.print(" ");
 				System.out.print(neighbour.toString());
 			}

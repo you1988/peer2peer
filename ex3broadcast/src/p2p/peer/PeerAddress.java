@@ -1,9 +1,11 @@
+package p2p.peer;
+
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 
-public class PeerInfo {
+public class PeerAddress {
 	
 	
 	private InetAddress address;
@@ -13,7 +15,7 @@ public class PeerInfo {
 	/**
 	 * Create a new instance of Peer.PeerInfo.
 	 */
-	public PeerInfo(InetAddress add, int port) {
+	public PeerAddress(InetAddress add, int port) {
 		this.address = add;
 		this.port = port;
 	}
@@ -22,19 +24,10 @@ public class PeerInfo {
 		return new InetSocketAddress(this.address, this.port);
 	}
 	
-	Peer getPeer() {
-		for (Peer p : UInterface.getInterface().listOfPeers) {
-			if (p.getInfo().equals(this)) {
-				return p;
-			}
-		}
-		return null;
-	}
-	
 	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
-		return (((PeerInfo)obj).port == this.port && ((PeerInfo)obj).address.equals(this.address));
+		return (((PeerAddress)obj).port == this.port && ((PeerAddress)obj).address.equals(this.address));
 	}
 	
 	/** {@inheritDoc} */
@@ -53,10 +46,10 @@ public class PeerInfo {
 		return this.address.getHostAddress() + "-" + String.valueOf(this.port);
 	}
 	
-	public static PeerInfo deserialize(String string) {
+	public static PeerAddress deserialize(String string) {
 		String[] parts = string.split("-");
 		try {
-			return new PeerInfo(InetAddress.getByName(parts[0]), Integer.valueOf(parts[1]));
+			return new PeerAddress(InetAddress.getByName(parts[0]), Integer.valueOf(parts[1]));
 		} catch (NumberFormatException | UnknownHostException e) {
 			throw new RuntimeException(e);
 		}

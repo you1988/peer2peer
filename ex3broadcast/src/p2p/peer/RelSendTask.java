@@ -1,26 +1,25 @@
-import java.io.IOException;
+package p2p.peer;
+
 import java.net.SocketAddress;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.TimerTask;
 import java.util.UUID;
 
 
-public class RelSendTask extends TimerTask {
+public class RelSendTask extends TimerTask implements ICallback {
 	
 	
 	private Peer peer;
 	private String msg;
 	private SocketAddress target;
 	private UUID uuid;
-	private Runnable runnable;
+	private ICallback runnable;
 	private int counter = 0;
 	
 	
 	/**
 	 * Create a new instance of AckTimeout.
 	 */
-	public RelSendTask(String msg, Peer peer, SocketAddress target, Runnable runnable) {
+	public RelSendTask(String msg, Peer peer, SocketAddress target, ICallback runnable) {
 		this.peer = peer;
 		this.msg = msg;
 		this.target = target;
@@ -36,21 +35,15 @@ public class RelSendTask extends TimerTask {
 		b.append(this.peer.getInfo().serialize());
 		b.append(" ");
 		b.append(this.msg);
-		try {
-			this.peer.channel.send(Charset.forName("ascii").encode(
-					CharBuffer.wrap(b.toString())), this.target);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.peer.send(b.toString(), this.target);
 		this.peer.ackBuffer.put(this.uuid, this);
-		this.peer.timer.schedule(this, Constants.ACK_DELAY);
 	}
 	
 	/** {@inheritDoc} */
 	@Override
 	public boolean cancel() {
 		boolean ret = super.cancel();
-		this.runnable.run();
+		this.runnable.error();
 		return ret;
 	}
 	
@@ -59,8 +52,22 @@ public class RelSendTask extends TimerTask {
 	public void run() {
 		this.send();
 		if (this.counter++ > 5) {
-			this.cancel();
+			this.error();
 		}
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public void success() {
+		this.runnable.success();
+		super.cancel();
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public void error() {
+		this.runnable.error();
+		super.cancel();
 	}
 	
 }

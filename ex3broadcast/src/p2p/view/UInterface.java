@@ -1,13 +1,11 @@
-import static java.lang.Math.min;
+package p2p.view;
 
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -15,6 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import p2p.control.Controller;
+import p2p.peer.Peer;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
@@ -36,29 +36,19 @@ public class UInterface extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private UndirectedSparseGraph<String, String> graph;
 	private BasicVisualizationServer<String, String> view;
-	private static UInterface that;
-	List<Peer> listOfPeers;
+	Controller controller;
+	
 	JTextField number;
 	
 	
-	/**
-	 * @return unique UInterface
-	 */
-	public static UInterface getInterface() {
-		if (that == null) {
-			that = new UInterface();
-		}
-		return that;
-	}
-	
-	private UInterface() {
+	public UInterface(Controller controller) {
+		this.controller = controller;
 		this.setLayout(new FlowLayout());
 		Container content = this.getContentPane();
 		content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 		
 		this.graph = new UndirectedSparseGraph<String, String>();
 		this.view = this.construct();
-		this.listOfPeers = new LinkedList<Peer>();
 		
 		JPanel panelSelector = new JPanel();
 		panelSelector.setLayout(new BoxLayout(panelSelector, BoxLayout.Y_AXIS));
@@ -101,74 +91,9 @@ public class UInterface extends JFrame {
 		return view;
 	}
 	
-	public void addNumberOfPeers(int number) {
-		for (int i = 0; i < number; i++) {
-			this.addPeer();
-		}
-	}
-	
-	public void addPeer() {
-		Peer newPeer;
-		if (this.listOfPeers.size() > 0) {
-			newPeer = new Peer(this.getRandomPeer());
-		} else {
-			newPeer = new Peer();
-		}
-		this.listOfPeers.add(newPeer);
-		this.graph.addVertex(newPeer.toString());
-		for (PeerInfo p : newPeer.getNeighbours()) {
-			this.graph.addEdge(p.toString() + "-" + newPeer.toString(), p.toString(), newPeer.toString());
-		}
-		this.repaint();
-		newPeer.start();
-	}
-	
 	public void removeConnection(Peer peer1, Peer peer2) {
 		this.graph.removeEdge(peer1 + "-" + peer2);
 		this.graph.removeEdge(peer2 + "-" + peer1);
-		this.repaint();
-	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		UInterface.getInterface();
-	}
-	
-	/**
-	 * @return random Peer
-	 */
-	Peer getRandomPeer() {
-		int rand = new Random().nextInt(this.listOfPeers.size());
-		return this.listOfPeers.get(rand);
-	}
-	
-	/**
-	 * @param number
-	 */
-	public void removeNumberOfPeers(int number) {
-		for (int i = 0; i < min(number, this.listOfPeers.size()); i++) {
-			this.removePeer();
-		}
-	}
-	
-	/**
-	 * 
-	 * 
-	 */
-	private void removePeer() {
-		if (this.listOfPeers.size() == 0) {
-			return;
-		}
-		Peer peer = this.getRandomPeer();
-		this.listOfPeers.remove(peer);
-//		this.graph.removeVertex(peer.toString());
-//		HashSet<PeerInfo> peers = (HashSet<PeerInfo>)peer.getNeighbours().clone();
-//		for (PeerInfo p : peers) {
-//			this.removeConnection(peer, p.getPeer());
-//		}
-		peer.leaveMe();
 		this.repaint();
 	}
 	
@@ -186,7 +111,11 @@ public class UInterface extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			int number = Integer.parseInt(this.ui.number.getText());
-			this.ui.addNumberOfPeers(number);
+			try {
+				this.ui.controller.addNumberOfPeers(number);
+			} catch (IOException e) {
+				System.err.println("Couldn't start all peers");
+			}
 		}
 	}
 	
@@ -202,7 +131,7 @@ public class UInterface extends JFrame {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			this.ui.broadcast();
+			this.ui.controller.broadcast();
 		}
 	}
 	
@@ -219,17 +148,8 @@ public class UInterface extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int number = Integer.parseInt(this.ui.number.getText());
-			this.ui.removeNumberOfPeers(number);
+			this.ui.controller.removeNumberOfPeers(number);
 		}
 	}
 	
-	
-	/**
-	 * 
-	 * 
-	 */
-	public void broadcast() {
-		Peer peer = this.getRandomPeer();
-		peer.startBroadcast();
-	}
 }

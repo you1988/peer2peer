@@ -1,9 +1,8 @@
+package p2p.peer;
+
 import java.util.TimerTask;
 
 
-/**
- * @author Alexander Nigl
- */
 public class LeaveAnyway extends TimerTask {
 	
 	
@@ -20,9 +19,7 @@ public class LeaveAnyway extends TimerTask {
 	/** {@inheritDoc} */
 	@Override
 	public void run() {
-		System.out.println("Bin weg!");
-		this.peer.timer.cancel();
-		this.peer.stop();
+		this.peer.shutdown();
 	}
 	
 }
