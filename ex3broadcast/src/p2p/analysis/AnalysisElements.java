@@ -4,15 +4,15 @@ package p2p.analysis;
  */
 public class AnalysisElements {
 	String time;
-	int spawn;
-	int leave;
+	int spawnRate;
+	int leaveRate;
 	int numOfNodes;
 	int dia;
 	
-	public AnalysisElements(String time, int spawn, int leave, int numOfNodes, int dia){
+	public AnalysisElements(String time, int spawnRate, int leaveRate, int numOfNodes, int dia){
 		this.time = time;
-		this.spawn = spawn;
-		this.leave = leave;
+		this.spawnRate = spawnRate;
+		this.leaveRate = leaveRate;
 		this.numOfNodes = numOfNodes;
 		this.dia = dia;
 	}

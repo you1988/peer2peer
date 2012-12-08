@@ -13,7 +13,6 @@ public class ComputeAnalysis{
 	 * @param spawn 
 	 * @param leave 
 	 * @param numOfNodes 
-	 * @param deg 
 	 * @param dia 
 	 */
 	public void addElements(String time, int spawn, int leave, int numOfNodes, int dia){

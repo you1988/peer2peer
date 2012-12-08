@@ -9,7 +9,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.RefineryUtilities;
 
 
 /**
@@ -44,8 +43,8 @@ public class AnalysisDiagram extends ApplicationFrame{
 	public CategoryDataset createDataset(List<AnalysisElements> values) {
 		DefaultCategoryDataset result = new DefaultCategoryDataset();
 		for (AnalysisElements analysisElements : values) {
-			result.addValue(analysisElements.spawn, "Spawn" , analysisElements.time);
-			result.addValue(analysisElements.leave, "Leave" , analysisElements.time);
+			result.addValue(analysisElements.spawnRate, "Spawn Rate" , analysisElements.time);
+			result.addValue(analysisElements.leaveRate, "Leave Rate" , analysisElements.time);
 			result.addValue(analysisElements.numOfNodes, "numOfNodes" , analysisElements.time);
 			result.addValue(analysisElements.dia, "Diameter" , analysisElements.time);
 		}
