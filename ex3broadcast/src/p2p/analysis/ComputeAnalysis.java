@@ -15,7 +15,7 @@ public class ComputeAnalysis{
 	 * @param numOfNodes 
 	 * @param dia 
 	 */
-	public void addElements(String time, int spawnRate, int leaveRate, int numOfNodes, int dia){
+	public void addElements(String time, double spawnRate, double leaveRate, int numOfNodes, int dia){
 		AnalysisElements v = new AnalysisElements(time, spawnRate, leaveRate, numOfNodes, dia);
 		this.values.add(v);
 	}
@@ -25,7 +25,11 @@ public class ComputeAnalysis{
 	 */
 	public void display(){
 		for(int i = 0; i < this.values.size(); i++){
-			System.out.println(this.values.get(i).toString());		//Ausgabe der Tabelle
+			System.out.println("Time: \t\t\t"+ this.values.get(i).time);
+			System.out.println("Spawn Rate: \t\t"+ this.values.get(i).spawnRate);
+			System.out.println("Leave Rate: \t\t"+ this.values.get(i).leaveRate);
+			System.out.println("Number of Nodes: \t"+ this.values.get(i).numOfNodes);
+			System.out.println("Diameter: \t\t"+ this.values.get(i).dia +"\n");
 		}
 	}
 }
