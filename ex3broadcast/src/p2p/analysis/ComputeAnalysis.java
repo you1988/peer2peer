@@ -10,13 +10,13 @@ public class ComputeAnalysis{
 	
 	/**
 	 * @param time 
-	 * @param spawn 
-	 * @param leave 
+	 * @param spawnRate 
+	 * @param leaveRate
 	 * @param numOfNodes 
 	 * @param dia 
 	 */
-	public void addElements(String time, int spawn, int leave, int numOfNodes, int dia){
-		AnalysisElements v = new AnalysisElements(time, spawn, leave, numOfNodes, dia);
+	public void addElements(String time, int spawnRate, int leaveRate, int numOfNodes, int dia){
+		AnalysisElements v = new AnalysisElements(time, spawnRate, leaveRate, numOfNodes, dia);
 		this.values.add(v);
 	}
 	
@@ -25,7 +25,7 @@ public class ComputeAnalysis{
 	 */
 	public void display(){
 		for(int i = 0; i < this.values.size(); i++){
-			System.out.println(this.values.get(i));		//Ausgabe der Tabelle
+			System.out.println(this.values.get(i).toString());		//Ausgabe der Tabelle
 		}
 	}
 }

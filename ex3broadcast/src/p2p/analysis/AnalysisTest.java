@@ -10,5 +10,7 @@ public class AnalysisTest {
 		c.addElements("3", 1, 2, 3, 4);
 		AnalysisDiagram v = new AnalysisDiagram("Dia");
 		v.start(c);
+		
+		c.display();
 	}
 }
