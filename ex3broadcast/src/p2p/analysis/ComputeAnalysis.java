@@ -15,7 +15,7 @@ public class ComputeAnalysis{
 	 * @param numOfNodes 
 	 * @param dia 
 	 */
-	public void addElements(String time, double spawnRate, double leaveRate, int numOfNodes, int dia){
+	public void addElements(String time, int spawnRate, int leaveRate, int numOfNodes, int dia){
 		AnalysisElements v = new AnalysisElements(time, spawnRate, leaveRate, numOfNodes, dia);
 		this.values.add(v);
 	}
