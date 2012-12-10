@@ -10,10 +10,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-
-/**
- * @author Markus Schneider
- */
 public class AnalysisDiagram extends ApplicationFrame{
 	
 	/**
