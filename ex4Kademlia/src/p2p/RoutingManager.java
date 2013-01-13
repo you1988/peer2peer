@@ -16,7 +16,7 @@ public class RoutingManager {
 	 * Gets ID of a Value or Peer and Returns a list of known neighbours next to it.
 	 * @return List of Peers near to given ID
 	 */
-	public List<Peer> getPeers(){
+	public List<Peer> getPeers(Peer ID){
 		//TODO: Add ID argument and implement this
 		return null;
 	}
